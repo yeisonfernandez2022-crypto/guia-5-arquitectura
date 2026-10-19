@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Taller de arquitectura — Gestor de tareas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <p class="eyebrow">SENA · ADSO</p>
+      <h1>Gestor de tareas</h1>
+      <p class="muted">Proyecto base para practicar separación de responsabilidades.</p>
+      <span id="api-status" class="status">Conectando con API…</span>
+    </header>
+
+    <section class="panel">
+      <h2>Nueva tarea</h2>
+      <form id="task-form">
+        <label for="title">Título</label>
+        <input id="title" name="title" minlength="3" required placeholder="Ej. Crear diagrama de arquitectura">
+        <label for="description">Descripción</label>
+        <textarea id="description" name="description" rows="3" placeholder="¿Qué se debe realizar?"></textarea>
+        <button type="submit">Crear tarea</button>
+        <p id="message" role="status"></p>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <h2>Tablero de trabajo</h2>
+        <button id="refresh" class="secondary" type="button">Actualizar</button>
+      </div>
+      <div id="task-list" class="task-list"></div>
+    </section>
+    <footer>Base didáctica: los datos se guardan en memoria y se reinician al detener el backend.</footer>
+  </main>
+  <script src="src/app.js"></script>
+</body>
+</html>

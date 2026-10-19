@@ -1,0 +1,15 @@
+{
+  "name": "taller-arquitectura-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API base para taller de arquitectura de software",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
