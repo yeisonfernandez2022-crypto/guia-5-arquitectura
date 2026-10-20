@@ -1,25 +1,36 @@
-const express = require("express");
-const cors = require("cors");
-const { TaskRepository } = require("./taskRepository");
-const { TaskService } = require("./taskService");
-const { createTaskController } = require("./taskController");
-const { createTaskRoutes } = require("./taskRoutes");
+const { loadConfig } = require("./config");
+const { createApp } = require("./app");
+const { InMemoryTaskRepository } = require("./infrastructure/InMemoryTaskRepository");
+const seedTasks = require("./infrastructure/seed");
+const { ListTasks } = require("./application/use-cases/ListTasks");
+const { CreateTask } = require("./application/use-cases/CreateTask");
+const { ChangeTaskStatus } = require("./application/use-cases/ChangeTaskStatus");
+const { GetTaskStatuses } = require("./application/use-cases/GetTaskStatuses");
+const { createTaskController } = require("./interfaces/http/taskController");
 
-const app = express();
-const port = process.env.PORT || 3000;
+function bootstrap(env = process.env) {
+  const config = loadConfig(env);
+  const repository = new InMemoryTaskRepository(seedTasks);
+  const controller = createTaskController({
+    listTasks: new ListTasks(repository),
+    createTask: new CreateTask(repository),
+    changeTaskStatus: new ChangeTaskStatus(repository),
+    getTaskStatuses: new GetTaskStatuses()
+  });
+  const app = createApp({
+    controller,
+    corsOrigin: config.corsOrigin,
+    staticDir: config.staticDir
+  });
 
-app.use(cors());
-app.use(express.json());
+  return { app, config };
+}
 
-const repository = new TaskRepository();
-const service = new TaskService(repository);
-const controller = createTaskController(service);
+if (require.main === module) {
+  const { app, config } = bootstrap();
+  app.listen(config.port, () => {
+    console.log(`API y frontend disponibles en http://localhost:${config.port}`);
+  });
+}
 
-app.get("/api/health", (req, res) => res.json({ status: "ok" }));
-app.use("/api/tasks", createTaskRoutes(controller));
-
-app.use((error, req, res, next) => {
-  res.status(error.statusCode || 500).json({ error: error.message || "Error interno del servidor" });
-});
-
-app.listen(port, () => console.log(`API lista en http://localhost:${port}`));
+module.exports = { bootstrap };
